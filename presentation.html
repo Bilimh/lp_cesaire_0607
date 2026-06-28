@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seconde GATL — Réunion parents</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
+    
+        /* ============================================================
+           TOKENS & VARIABLES
+           ============================================================ */
+        :root {
+            --blue: #155D95;
+            --blue-light: #2F8FD3;
+            --green: #2F7D4F;
+            --yellow: #F2C94C;
+            --dark: #23313B;
+            --gray: #66737E;
+            --white: #FFFFFF;
+            --radius-sm: 10px;
+            --radius-md: 16px;
+            --radius-lg: 20px;
+            --shadow-sm: 0 8px 20px rgba(0,0,0,0.04);
+            --shadow-md: 0 8px 32px rgba(0,0,0,0.15);
+        }
+    
+        /* ============================================================
+           RESET & BASE
+           ============================================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+    
+        html, body {
+            font-family: "Montserrat", Arial, sans-serif;
+            background: #0a0a0a;
+            height: 100%;
+            overflow: hidden;
+        }
+    
+        /* ============================================================
+           DECK
+           ============================================================ */
+        #deck {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+    
+        /* ============================================================
+           SLIDES
+           ============================================================ */
+        .slide {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            scroll-snap-align: start;
+            background-color: #f4f7fb;
+            background-image: var(--bg);
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+    
+        .slide::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+    
+        /* ============================================================
+           CONTENU
+           ============================================================ */
+        .content {
+            position: relative;
+            z-index: 2;
+            width: min(1120px, 85vw);
+            margin: 0 auto;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 90vh;
+            max-height: 850px;
+        }
+    
+        .content.centered {
+            align-items: center;
+            text-align: center;
+        }
+    
+        /* ============================================================
+           TYPOGRAPHIE — ÉLÉMENTS DE BASE
+           ============================================================ */
+        .eyebrow {
+            color: var(--green);
+            font-size: clamp(13px, 1vw, 16px);
+            font-weight: 900;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .eyebrow.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    
+        /* ---- Typewriter principal ---- */
+        .typewriter {
+            font-size: clamp(32px, 4vw, 56px);
+            font-weight: 900;
+            color: var(--blue);
+            line-height: 1.08;
+            letter-spacing: -1px;
+            min-height: 1.2em;
+            opacity: 0;
+            max-width: 900px;
+        }
+        .content:not(.centered) .typewriter {
+            margin-left: 0;
+            margin-right: 0;
+        }
+        .typewriter .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1em;
+            background: var(--blue);
+            margin-left: 4px;
+            animation: blink 0.8s step-end infinite;
+            vertical-align: text-bottom;
+        }
+        .typewriter .cursor.hidden { display: none; }
+        .typewriter.done { opacity: 1; }
+    
+        /* ---- Typewriter secondaire ---- */
+        .typewriter-small {
+            font-size: clamp(24px, 2.5vw, 36px);
+            font-weight: 800;
+            color: var(--green);
+            line-height: 1.2;
+            min-height: 1.2em;
+            opacity: 0;
+            max-width: 700px;
+        }
+        .content:not(.centered) .typewriter-small {
+            margin-left: 0;
+            margin-right: 0;
+        }
+        .typewriter-small .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1em;
+            background: var(--green);
+            margin-left: 4px;
+            animation: blink 0.8s step-end infinite;
+            vertical-align: text-bottom;
+        }
+        .typewriter-small .cursor.hidden { display: none; }
+        .typewriter-small.done { opacity: 1; }
+    
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    
+        /* ---- Ligne décorative ---- */
+        .line {
+            width: 80px;
+            height: 4px;
+            background: var(--yellow);
+            border-radius: 4px;
+            margin: 16px 0 20px 0;
+            opacity: 0;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .line.visible {
+            opacity: 1;
+            transform: scaleX(1);
+        }
+        .line.centered {
+            margin: 16px auto 20px auto;
+            transform-origin: center;
+        }
+    
+        /* ---- Texte ---- */
+        .text {
+            font-size: clamp(16px, 1.4vw, 22px);
+            font-weight: 600;
+            color: var(--dark);
+            line-height: 1.5;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            max-width: 760px;
+        }
+        .content:not(.centered) .text {
+            margin-left: 0;
+            margin-right: 0;
+        }
+        .text.centered {
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 680px;
+        }
+        .text.large {
+            font-size: clamp(20px, 1.8vw, 28px);
+            font-weight: 650;
+        }
+        .text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    
+        /* ============================================================
+           GRILLES
+           ============================================================ */
+        .grid-2,
+        .grid-3,
+        .grid-4 {
+            display: grid;
+            gap: 20px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+    
+        .grid-6 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            width: 100%;
+            margin-top: 16px;
+        }
+    
+        /* ============================================================
+           CARTES GÉNÉRIQUES
+           ============================================================ */
+        .card {
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(35, 49, 59, 0.08);
+            border-radius: var(--radius-md);
+            padding: 24px 22px;
+            color: var(--dark);
+            box-shadow: var(--shadow-sm);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .card .num {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--blue);
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+        .card h3 {
+            font-size: clamp(18px, 1.4vw, 22px);
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 6px;
+        }
+        .card p {
+            font-size: clamp(14px, 1vw, 16px);
+            font-weight: 500;
+            color: var(--gray);
+            line-height: 1.4;
+        }
+        .card strong {
+            font-size: clamp(28px, 2.5vw, 38px);
+            font-weight: 900;
+            color: var(--blue);
+            display: block;
+        }
+        .card span {
+            font-size: clamp(14px, 1vw, 16px);
+            font-weight: 600;
+            color: var(--gray);
+        }
+    
+        /* ============================================================
+           STATS
+           ============================================================ */
+        .stat {
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(35, 49, 59, 0.08);
+            border-radius: var(--radius-md);
+            padding: 28px 20px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .stat.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .stat strong {
+            font-size: clamp(38px, 4vw, 56px);
+            font-weight: 900;
+            color: var(--blue);
+            display: block;
+        }
+        .stat span {
+            font-size: clamp(14px, 1vw, 16px);
+            font-weight: 600;
+            color: var(--gray);
+        }
+    
+        /* ============================================================
+           FINAL / INFO
+           ============================================================ */
+        .final {
+            display: flex;
+            gap: 40px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+        .final.centered { justify-content: center; }
+    
+        .info {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .info.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .info strong {
+            font-size: clamp(16px, 1.2vw, 20px);
+            font-weight: 800;
+            color: var(--dark);
+            display: block;
+        }
+        .info p {
+            font-size: clamp(13px, 1vw, 16px);
+            font-weight: 500;
+            color: var(--gray);
+        }
+    
+        /* ============================================================
+           AGENDA
+           ============================================================ */
+        .agenda {
+            list-style: none;
+            border-top: 1px solid rgba(35, 49, 59, 0.12);
+            width: 100%;
+            margin-top: 16px;
+        }
+        .agenda li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(35, 49, 59, 0.12);
+            color: var(--dark);
+            font-size: clamp(16px, 1.3vw, 22px);
+            font-weight: 700;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .agenda li.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    
+        /* ============================================================
+           SPECIALITY CARDS
+           ============================================================ */
+        .speciality-card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(35, 49, 59, 0.08);
+            border-radius: var(--radius-lg);
+            padding: 28px 22px 24px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .speciality-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .speciality-card .icon-wrapper {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--icon-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            color: white;
+            margin: 0 auto 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        }
+        .speciality-card h3 {
+            font-size: clamp(20px, 1.6vw, 26px);
+            font-weight: 900;
+            color: var(--dark);
+        }
+        .speciality-card > p {
+            font-size: clamp(14px, 1vw, 16px);
+            font-weight: 600;
+            color: var(--gray);
+        }
+    
+        .speciality-details {
+            list-style: none;
+            text-align: left;
+            margin-top: 10px;
+            padding: 0;
+        }
+        .speciality-details li {
+            padding: 6px 0;
+            font-size: clamp(13px, 0.9vw, 15px);
+            font-weight: 600;
+            color: var(--dark);
+            border-bottom: 1px solid rgba(35, 49, 59, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .speciality-details li:last-child { border-bottom: none; }
+        .speciality-details li i {
+            color: var(--icon-color);
+            width: 18px;
+        }
+    
+        /* ============================================================
+           TEAM
+           ============================================================ */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            width: 100%;
+            margin-top: 16px;
+        }
+    
+        .team-card {
+            background: rgba(255, 255, 255, 0.80);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(35, 49, 59, 0.05);
+            border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .team-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .team-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--team-color);
+            opacity: 0.4;
+            border-radius: 12px 0 0 12px;
+        }
+    
+        .team-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--team-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+    
+        .team-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            min-width: 0;
+        }
+        .team-name {
+            font-size: clamp(13px, 0.9vw, 15px);
+            font-weight: 700;
+            color: var(--dark);
+        }
+        .team-role {
+            font-size: clamp(9px, 0.65vw, 11px);
+            font-weight: 600;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+        .team-subject {
+            font-size: clamp(10px, 0.7vw, 12px);
+            font-weight: 500;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .team-subject i {
+            color: var(--team-color);
+            font-size: 10px;
+            opacity: 0.6;
+        }
+    
+        /* ============================================================
+           STAGES
+           ============================================================ */
+        .stage-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+            margin-top: 16px;
+        }
+    
+        .stage-card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(35, 49, 59, 0.08);
+            border-radius: var(--radius-md);
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .stage-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .stage-card .icon-wrapper {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background: var(--icon-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            margin: 0 auto 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        }
+        .stage-card h3 {
+            font-size: clamp(17px, 1.2vw, 20px);
+            font-weight: 800;
+            color: var(--dark);
+        }
+        .stage-card p {
+            font-size: clamp(14px, 1vw, 16px);
+            font-weight: 500;
+            color: var(--gray);
+        }
+    
+        .stage-tags {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .stage-tag {
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: clamp(10px, 0.7vw, 12px);
+            font-weight: 700;
+            color: white;
+            background: var(--icon-color);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+    
+        /* ============================================================
+           TIMELINE / DATES
+           ============================================================ */
+        .date-timeline {
+            padding-left: 28px;
+            position: relative;
+            width: 100%;
+            margin-top: 16px;
+        }
+        .date-timeline::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 8px;
+            bottom: 8px;
+            width: 1px;
+            background: rgba(35, 49, 59, 0.12);
+        }
+    
+        .date-item {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            position: relative;
+            padding: 8px 0;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            width: 400px;
+        }
+        .date-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    
+        .date-marker {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .marker-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--date-color);
+            border: 2px solid rgba(255,255,255,0.8);
+            box-shadow: 0 0 0 3px var(--date-color);
+            flex-shrink: 0;
+        }
+        .marker-line {
+            width: 1px;
+            flex: 1;
+            background: rgba(35, 49, 59, 0.08);
+            min-height: 10px;
+        }
+        .date-item:last-child .marker-line { display: none; }
+    
+        .date-content {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(35, 49, 59, 0.06);
+            border-radius: var(--radius-sm);
+            padding: 8px 18px 8px 16px;
+            flex: 1;
+            position: relative;
+        }
+        .date-content::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+            background: var(--date-color);
+            opacity: 0.4;
+        }
+    
+        .date-period {
+            font-size: clamp(10px, 0.7vw, 12px);
+            font-weight: 600;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        .date-range {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .date-month {
+            font-size: clamp(17px, 1.3vw, 21px);
+            font-weight: 600;
+            color: var(--dark);
+        }
+        .date-day {
+            font-size: clamp(17px, 1.3vw, 21px);
+            font-weight: 700;
+            color: var(--dark);
+        }
+        .date-separator {
+            font-size: clamp(13px, 0.9vw, 17px);
+            font-weight: 300;
+            color: var(--gray);
+        }
+        .date-year {
+            font-size: clamp(12px, 0.8vw, 15px);
+            font-weight: 500;
+            color: var(--gray);
+        }
+    
+        /* ============================================================
+           CONTROLEUR
+           ============================================================ */
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(21, 93, 149, 0.88);
+            backdrop-filter: blur(12px);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 999;
+            box-shadow: var(--shadow-md);
+            pointer-events: none;
+            user-select: none;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .slide-counter.hidden {
+            opacity: 0;
+            transform: translateX(-50%) translateY(20px);
+        }
+        .slide-counter .num {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .slide-counter .keys {
+            display: flex;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 500;
+            opacity: 0.7;
+        }
+        .slide-counter .keys kbd {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: inherit;
+            color: white;
+        }
+    
+        /* ============================================================
+           PROGRESS BAR
+           ============================================================ */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: rgba(255,255,255,0.15);
+            z-index: 1000;
+        }
+        .progress-container .bar {
+            height: 100%;
+            background: var(--blue);
+            transition: width 0.6s ease;
+            width: 0%;
+        }
+    
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 1100px) {
+            .content {
+                width: 90vw;
+                padding: 15px 0;
+                height: 92vh;
+            }
+            .grid-2,
+            .grid-3,
+            .grid-4,
+            .grid-6,
+            .stage-grid,
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 14px;
+            }
+            .typewriter {
+                font-size: clamp(28px, 3.5vw, 42px);
+            }
+        }
+    
+        @media (max-width: 768px) {
+            .content {
+                width: 94vw;
+                padding: 10px 0;
+                height: 95vh;
+                max-height: none;
+            }
+            .grid-2,
+            .grid-3,
+            .grid-4,
+            .grid-6,
+            .stage-grid,
+            .team-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .typewriter {
+                font-size: clamp(22px, 3vw, 32px);
+            }
+            .typewriter-small {
+                font-size: clamp(18px, 2vw, 26px);
+            }
+            .slide::before {
+                background: rgba(255, 255, 255, 0.92);
+            }
+            .slide-counter {
+                bottom: 16px;
+                padding: 8px 16px;
+                font-size: 12px;
+                gap: 12px;
+                width: 92%;
+                border-radius: 30px;
+                justify-content: center;
+            }
+            .slide-counter .keys kbd {
+                font-size: 10px;
+                padding: 2px 6px;
+            }
+            .final {
+                gap: 20px;
+                flex-direction: column;
+                align-items: center;
+            }
+            .speciality-card .icon-wrapper {
+                width: 60px;
+                height: 60px;
+                font-size: 26px;
+            }
+            .stage-card .icon-wrapper {
+                width: 54px;
+                height: 54px;
+                font-size: 22px;
+            }
+            .team-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+            .team-card {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-container">
+        <div class="bar" id="progressBar"></div>
+    </div>
+
+    <!-- ===== DECK ===== -->
+    <div id="deck">
+
+        <!-- ==========================================================
+        SLIDE 1 — ACCUEIL
+        ========================================================== -->
+        <section class="slide" data-slide="0" style="--bg:url('images/slide01.png')">
+            <div class="content">
+                <p class="eyebrow" data-step="0" data-type="fade">Réunion parents-élèves — Rentrée 2026</p>
+                <div class="typewriter" data-step="1" data-type="typewriter" data-text="Bienvenue en Seconde GATL"></div>
+                <div class="line" data-step="2" data-type="fade"></div>
+                <p class="text" data-step="3" data-type="fade" style="font-size:clamp(18px,1.6vw,26px);font-weight:650;">Gestion Administrative, Transport et Logistique</p>
+                <p class="text" data-step="4" data-type="fade" style="font-size:clamp(16px,1.3vw,22px);color:var(--gray);">Une année pour découvrir, comprendre et construire son projet professionnel.</p>
+            </div>
+        </section>
+
+        <!-- ==========================================================
+        SLIDE 2 — PROGRAMME
+        ========================================================== -->
+        <section class="slide" data-slide="1" style="--bg:url('images/slide02.png')">
+            <div class="content">
+                <p class="eyebrow" data-step="0" data-type="fade">Au programme</p>
+                <div class="typewriter" data-step="1" data-type="typewriter" data-text="Le parcours de la réunion"></div>
+                <div class="line" data-step="2" data-type="fade"></div>
+                <ul class="agenda">
+                    <li data-step="3" data-type="fade">Qu'est-ce que la Seconde GATL ?</li>
+                    <li data-step="4" data-type="fade">Pour qui ?</li>
+                    <li data-step="5" data-type="fade">Les enseignements</li>
+                    <li data-step="6" data-type="fade">Les stages</li>
+                    <li data-step="7" data-type="fade">Et après ? Les 3 spécialités</li>
+                    <li data-step="8" data-type="fade">Questions / Réponses</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ==========================================================
+        SLIDE 3 — ÉQUIPE
+        ========================================================== -->
+        <section class="slide" data-slide="2" style="--bg:url('images/slide01b.png')">
+            <div class="content">
+                <p class="eyebrow" data-step="0" data-type="fade">Réunion parents-élèves — Rentrée 2026</p>
+                <div class="typewriter" data-step="1" data-type="typewriter" data-text="L'équipe pédagogique"></div>
+                <div class="line" data-step="2" data-type="fade"></div>
+                <div class="team-grid">
+                    <div class="team-card" data-step="3" data-type="fade" style="--team-color: #155D95;">
+                        <div class="team-avatar"><i class="fas fa-user-tie"></i></div>
+                        <div class="team-info">
+                            <div class="team-name">M. DIANKHA</div>
+                            <div class="team-role">Professeur Principal</div>
+                            <div class="team-subject"><i class="fas fa-book"></i> Économie-Droit</div>
+                        </div>
+                    </div>
+                    <div class="team-card" data-step="4" data-type="fade" style="--team-color: #2F8FD3;">
+                        <div class="team-avatar"><i class="fas fa-user-graduate"></i></div>
+                        <div class="team-info">
+                            <div class="team-name">Mme. MARTIN</div>
+                            <div class="team-role">Enseignante</div>
+                            <div class="team-subject"><i class="fas fa-language"></i> Français</div>
+                        </div>
+                    </div>
+                    <div class="team-card" data-step="5" data-type="fade" style="--team-color: #2F7D4F;">
+                        <div class="team-avatar"><i class="fas fa-user-graduate"></i></div>
+                        <div class="team-info">
+                            <div class="team-name">M. DUBOIS</div>
+                            <div class="team-role">Enseignant</div>
+                            <div class="team-subject"><i class="fas fa-calculator"></i> Mathématiques</div>
+                        </div>
+                    </div>
+                    <div class="team-card" data-step="6" data-type="fade" style="--team-color: #E67E22;">
+                        <div class="team-avatar"><i class="fas fa-user-graduate"></i></div>
+                        <div class="team-info">
+                            <div class="team-name">Mme. LEFEVRE</div>
+                            <div class="team-role">Enseignante</div>
+                            <div class="team-subject"><i class="fas fa-globe-europe"></i> Histoire-Géo</div>
+                        </div>
+                    </div>
+                    <div class="team-card" data-step="7" data-type="fade" style="--team-color: #9B59B6;">
+                        <div class="team-avatar"><i class="fas fa-user-graduate"></i></div>
+                        <div class="team-info">
+                            <div class="team-name">Mme. PETIT</div>
+                            <div class="team-role">Enseignante</div>
+                            <div class="team-subject"><i class="fas fa-language"></i> Anglais</div>
+                        </div>
+                    </div>
+                    <div class="team-card" data-step="8" data-type="fade" style="--team-color: #E74C3C;">
+                        <div class="team-avatar"><i class="fas fa-user-graduate"></i></div>
+                        <div class="team-info">
+                            <div class="team-name">M. GARCIA</div>
+                            <div class="team-role">Enseignant</div>
+                            <div class="team-subject"><i class="fas fa-language"></i> Espagnol</div>
+                        </div>
+                    </div>
+                    <div class="team-card" data-step="9" data-type="fade" style="--team-color: #2F8FD3;">
+                        <div class="team-avatar"><i class="fas fa-user-graduate"></i></div>
+                        <div class="team-info">
+                            <div class="team-name">Mme. ROUX</div>
+                            <div class="team-role">Enseignante</div>
+                            <div class="team-subject"><i class="fas fa-dumbbell"></i> EPS</div>
+                        </div>
+                    </div>
+                    <div class="team-card" data-step="10" data-type="fade" style="--team-color: #2F7D4F;">
+                        <div class="team-avatar"><i class="fas fa-user-graduate"></i></div>
+                        <div class="team-info">
+                            <div class="team-name">M. MOREAU</div>
+                            <div class="team-role">Enseignant</div>
+                            <div class="team-subject"><i class="fas fa-flask"></i> Sciences</div>
+                        </div>
+                    </div>
+                    <div class="team-card" data-step="11" data-type="fade" style="--team-color: #E67E22;">
+                        <div class="team-avatar"><i class="fas fa-user-graduate"></i></div>
+                        <div class="team-info">
+                            <div class="team-name">Mme. BERNARD</div>
+                            <div class="team-role">Enseignante</div>
+                            <div class="team-subject"><i class="fas fa-paint-brush"></i> Arts Appliqués</div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text" data-step="12" data-type="fade" style="font-size:clamp(13px,0.9vw,15px);color:var(--gray);margin-top:12px;opacity:0.6;">
+                    <i class="fas fa-users" style="color:var(--green);"></i> Une équipe engagée pour la réussite de chaque élève
+                </p>
+            </div>
+        </section>
+
+        <!-- ==========================================================
+        SLIDE 4 — COMPRENDRE
+        ========================================================== -->
+        <section class="slide" data-slide="3" style="--bg:url('images/slide08.png')">
+            <div class="content">
+                <p class="eyebrow" data-step="0" data-type="fade">01 — Comprendre</p>
+                <div class="typewriter" data-step="1" data-type="typewriter" data-text="Une classe de détermination"></div>
+                <div class="line" data-step="2" data-type="fade"></div>
+                <div class="grid-3">
+                    <div class="card" data-step="3" data-type="fade">
+                        <h3>Une 2<sup>de</sup> professionnelle</h3>
+                        <p>Découverte des métiers du tertiaire</p>
+                    </div>
+                    <div class="card" data-step="4" data-type="fade">
+                        <h3>3 familles de métiers</h3>
+                        <p>Administration, Transport, Logistique</p>
+                    </div>
+                    <div class="card" data-step="5" data-type="fade">
+                        <h3>Un tremplin</h3>
+                        <p>Vers un Bac Pro en 3 ans</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================
+        SLIDE 5 — POUR QUI
+        ========================================================== -->
+        <section class="slide" data-slide="4" style="--bg:url('images/slide04.png')">
+            <div class="content">
+                <p class="eyebrow" data-step="0" data-type="fade">02 — Pour qui ?</p>
+                <div class="typewriter" data-step="1" data-type="typewriter" data-text="Accessible après"></div>
+                <div class="line" data-step="2" data-type="fade"></div>
+                <div class="grid-3">
+                    <div class="card" data-step="3" data-type="fade">
+                        <h3>Une 3<sup>ème</sup></h3>
+                        <p>Parcours général ou technologique</p>
+                    </div>
+                    <div class="card" data-step="4" data-type="fade">
+                        <h3>Une 3<sup>ème</sup> Prépa Métier</h3>
+                        <p>Découverte professionnelle</p>
+                    </div>
+                    <div class="card" data-step="5" data-type="fade">
+                        <h3>Une réorientation</h3>
+                        <p>Changement de parcours</p>
+                    </div>
+                </div>
+                <p class="text" data-step="6" data-type="fade" style="font-size:clamp(18px,1.6vw,26px);font-weight:800;color:var(--green);border-left:5px solid var(--yellow);padding-left:20px;margin-top:16px;">
+                    Motivation & organisation
+                </p>
+            </div>
+        </section>
+
+        <!--==========================================================
+        SLIDE 6 — ENSEIGNEMENTS
+        ==========================================================-->
+        <section class="slide" data-slide="5" style="--bg:url('images/slide05.png')">
+            <div class="content">
+                <p class="eyebrow" data-step="0" data-type="fade">03 — Enseignements</p>
+                <div class="typewriter" data-step="1" data-type="typewriter" data-text="Des cours généraux et professionnels"></div>
+                <div class="line" data-step="2" data-type="fade"></div>
+                <div class="grid-2">
+                    <div class="card" data-step="3" data-type="fade">
+                        <h3>📚 Généraux</h3>
+                        <p>Français, Maths/Sciences, Histoire-Géo, Anglais, Espagnol, EPS</p>
+                    </div>
+                    <div class="card" data-step="4" data-type="fade">
+                        <h3>🛠️ Professionnels</h3>
+                        <p>Économie-Droit, Techniques pro, Arts appliqués, Chef-d'œuvre, Co-intervention, AP</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================
+        SLIDE 7 — COMPÉTENCES
+        ========================================================== -->
+        <section class="slide" data-slide="6" style="--bg:url('images/slide06.png')">
+            <div class="content">
+                <p class="eyebrow" data-step="0" data-type="fade">04 — Compétences</p>
+                <div class="typewriter" data-step="1" data-type="typewriter" data-text="Des compétences concrètes"></div>
+                <div class="line" data-step="2" data-type="fade"></div>
+                <div class="grid-3">
+                    <div class="card" data-step="3" data-type="fade" style="text-align:center;padding:24px 16px;">
+                        <div style="width:60px;height:60px;border-radius:50%;background:#2F8FD3;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:26px;color:white;"><i class="fas fa-handshake"></i></div>
+                        <h3 style="font-size:clamp(14px,1vw,17px);">Accueil et relation client</h3>
+                        <p style="font-size:clamp(12px,0.8vw,14px);">Gestion des interactions et satisfaction client</p>
+                    </div>
+                    <div class="card" data-step="4" data-type="fade" style="text-align:center;padding:24px 16px;">
+                        <div style="width:60px;height:60px;border-radius:50%;background:#2F7D4F;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:26px;color:white;"><i class="fas fa-calendar-check"></i></div>
+                        <h3 style="font-size:clamp(14px,1vw,17px);">Organisation et planning</h3>
+                        <p style="font-size:clamp(12px,0.8vw,14px);">Gestion du temps et des ressources</p>
+                    </div>
+                    <div class="card" data-step="5" data-type="fade" style="text-align:center;padding:24px 16px;">
+                        <div style="width:60px;height:60px;border-radius:50%;background:#F2C94C;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:26px;color:white;"><i class="fas fa-clock"></i></div>
+                        <h3 style="font-size:clamp(14px,1vw,17px);">Contrôle des délais</h3>
+                        <p style="font-size:clamp(12px,0.8vw,14px);">Suivi et respect des échéances</p>
+                    </div>
+                    <div class="card" data-step="6" data-type="fade" style="text-align:center;padding:24px 16px;">
+                        <div style="width:60px;height:60px;border-radius:50%;background:#E74C3C;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:26px;color:white;"><i class="fas fa-file-invoice"></i></div>
+                        <h3 style="font-size:clamp(14px,1vw,17px);">Gestion : commandes, facturation</h3>
+                        <p style="font-size:clamp(12px,0.8vw,14px);">Suivi administratif et financier</p>
+                    </div>
+                    <div class="card" data-step="7" data-type="fade" style="text-align:center;padding:24px 16px;">
+                        <div style="width:60px;height:60px;border-radius:50%;background:#9B59B6;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:26px;color:white;"><i class="fas fa-truck"></i></div>
+                        <h3 style="font-size:clamp(14px,1vw,17px);">Logistique et transport</h3>
+                        <p style="font-size:clamp(12px,0.8vw,14px);">Gestion des flux et des déplacements</p>
+                    </div>
+                    <div class="card" data-step="8" data-type="fade" style="text-align:center;padding:24px 16px;">
+                        <div style="width:60px;height:60px;border-radius:50%;background:#E67E22;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:26px;color:white;"><i class="fas fa-shield-alt"></i></div>
+                        <h3 style="font-size:clamp(14px,1vw,17px);">Respect des normes</h3>
+                        <p style="font-size:clamp(12px,0.8vw,14px);">Conformité et sécurité</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================
+        SLIDE 8 — STAGES
+        ========================================================== -->
+        <section class="slide" data-slide="7" style="--bg:url('images/slide07.png')">
+            <div class="content">
+                <p class="eyebrow" data-step="0" data-type="fade">05 — Stages en 2<sup>de</sup></p>
+                <div class="typewriter" data-step="1" data-type="typewriter" data-text="6 semaines en entreprise"></div>
+                <div class="line" data-step="2" data-type="fade"></div>
+                <div class="stage-grid">
+                    <div class="stage-card" data-step="3" data-type="fade" style="--icon-color: #2F8FD3;">
+                        <div class="icon-wrapper"><i class="fas fa-calendar-week"></i></div>
+                        <h3>2 périodes de 3 semaines</h3>
+                        <p>Une immersion progressive et structurée</p>
+                        <div class="stage-tags">
+                            <span class="stage-tag"><i class="fas fa-clock"></i> 3 semaines</span>
+                            <span class="stage-tag"><i class="fas fa-sync-alt"></i> 2 fois</span>
+                        </div>
+                    </div>
+                    <div class="stage-card" data-step="4" data-type="fade" style="--icon-color: #2F7D4F;">
+                        <div class="icon-wrapper"><i class="fas fa-building"></i></div>
+                        <h3>Immersion en entreprise</h3>
+                        <p>Vivre le quotidien d'un professionnel</p>
+                        <div class="stage-tags">
+                            <span class="stage-tag"><i class="fas fa-users"></i> Équipe</span>
+                            <span class="stage-tag"><i class="fas fa-tasks"></i> Missions</span>
+                        </div>
+                    </div>
+                    <div class="stage-card" data-step="5" data-type="fade" style="--icon-color: #E67E22;">
+                        <div class="icon-wrapper"><i class="fas fa-compass"></i></div>
+                        <h3>Découverte des métiers</h3>
+                        <p>Explorer les filières professionnelles</p>
+                        <div class="stage-tags">
+                            <span class="stage-tag"><i class="fas fa-search"></i> Explorer</span>
+                            <span class="stage-tag"><i class="fas fa-route"></i> Orientation</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================
+        SLIDE 9 — DATES STAGES
+        ========================================================== -->
+        <section class="slide" data-slide="8" style="--bg:url('images/slide07b.png')">
+            <div class="content">
+                <p class="eyebrow" data-step="0" data-type="fade">05 — Stages en 2<sup>de</sup></p>
+                <div class="typewriter" data-step="1" data-type="typewriter" data-text="Les dates clés à retenir"></div>
+                <div class="line" data-step="2" data-type="fade"></div>
+                <div class="date-timeline">
+                    <div class="date-item" data-step="3" data-type="fade" style="--date-color: #155D95;">
+                        <div class="date-marker">
+                            <span class="marker-dot"></span>
+                            <span class="marker-line"></span>
+                        </div>
+                        <div class="date-content">
+                            <div class="date-period">Première période</div>
+                            <div class="date-range">
+                                <span class="date-month">Janvier</span>
+                                <span class="date-separator">—</span>
+                                <span class="date-month">Février</span>
+                                <span class="date-year">2027</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="date-item" data-step="4" data-type="fade" style="--date-color: #2F7D4F;">
+                        <div class="date-marker">
+                            <span class="marker-dot"></span>
+                            <span class="marker-line"></span>
+                        </div>
+                        <div class="date-content">
+                            <div class="date-period">Seconde période</div>
+                            <div class="date-range">
+                                <span class="date-day">4</span>
+                                <span class="date-month">Juin</span>
+                                <span class="date-separator">—</span>
+                                <span class="date-day">20</span>
+                                <span class="date-month">Juin</span>
+                                <span class="date-year">2027</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================
+        SLIDE 10 — 3 SPÉCIALITÉS
+        ========================================================== -->
+        <section class="slide" data-slide="9" style="--bg:url('images/slide08.png')">
+            <div class="content">
+                <p class="eyebrow" data-step="0" data-type="fade">06 — Après la seconde</p>
+                <div class="typewriter" data-step="1" data-type="typewriter" data-text="3 spécialités de Bac Pro"></div>
+                <div class="line" data-step="2" data-type="fade"></div>
+                <div class="grid-3">
+                    <div class="speciality-card" data-step="3" data-type="fade" style="--icon-color: #2F8FD3;">
+                        <div class="icon-wrapper"><i class="fas fa-users-cog"></i></div>
+                        <h3>AGOrA</h3>
+                        <p>Administration, Gestion, Organisation</p>
+                    </div>
+                    <div class="speciality-card" data-step="4" data-type="fade" style="--icon-color: #2F7D4F;">
+                        <div class="icon-wrapper"><i class="fas fa-warehouse"></i></div>
+                        <h3>Logistique</h3>
+                        <p>Gestion des flux et des stocks</p>
+                    </div>
+                    <div class="speciality-card" data-step="5" data-type="fade" style="--icon-color: #E67E22;">
+                        <div class="icon-wrapper"><i class="fas fa-truck-fast"></i></div>
+                        <h3>OTM</h3>
+                        <p>Organisation et Transport de Marchandises</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================
+        SLIDE 11 — DÉTAILS SPÉCIALITÉS
+        ========================================================== -->
+        <section class="slide" data-slide="10" style="--bg:url('images/slide008.png')">
+            <div class="content">
+                <p class="eyebrow" data-step="0" data-type="fade">07 — Spécialités</p>
+                <div class="typewriter" data-step="1" data-type="typewriter" data-text="Que deviennent-ils ensuite ?"></div>
+                <div class="line" data-step="2" data-type="fade"></div>
+                <div class="grid-3">
+                    <div class="speciality-card" data-step="3" data-type="fade" style="--icon-color: #2F8FD3;">
+                        <div class="icon-wrapper"><i class="fas fa-users-cog"></i></div>
+                        <h3>AGOrA</h3>
+                        <ul class="speciality-details">
+                            <li><i class="fas fa-check-circle"></i> Bureau et accueil</li>
+                            <li><i class="fas fa-check-circle"></i> Ressources Humaines</li>
+                            <li><i class="fas fa-check-circle"></i> Comptabilité</li>
+                        </ul>
+                    </div>
+                    <div class="speciality-card" data-step="4" data-type="fade" style="--icon-color: #2F7D4F;">
+                        <div class="icon-wrapper"><i class="fas fa-warehouse"></i></div>
+                        <h3>Logistique</h3>
+                        <ul class="speciality-details">
+                            <li><i class="fas fa-check-circle"></i> Entrepôt et stocks</li>
+                            <li><i class="fas fa-check-circle"></i> Préparation de commandes</li>
+                            <li><i class="fas fa-check-circle"></i> Supply chain</li>
+                        </ul>
+                    </div>
+                    <div class="speciality-card" data-step="5" data-type="fade" style="--icon-color: #E67E22;">
+                        <div class="icon-wrapper"><i class="fas fa-truck-fast"></i></div>
+                        <h3>OTM</h3>
+                        <ul class="speciality-details">
+                            <li><i class="fas fa-check-circle"></i> Transport et planning</li>
+                            <li><i class="fas fa-check-circle"></i> Gestion douanière</li>
+                            <li><i class="fas fa-check-circle"></i> Relation clients</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================
+        SLIDE 12 — STAGES SUR 3 ANS
+        ========================================================== -->
+        <section class="slide" data-slide="11" style="--bg:url('images/slide10.png')">
+            <div class="content">
+                <p class="eyebrow" data-step="0" data-type="fade">08 — Stages sur 3 ans</p>
+                <div class="typewriter" data-step="1" data-type="typewriter" data-text="Un parcours professionnel"></div>
+                <div class="line" data-step="2" data-type="fade"></div>
+                <div class="grid-3">
+                    <div class="card" data-step="3" data-type="fade" style="text-align:center;">
+                        <strong style="font-size:clamp(28px,3vw,42px);color:var(--blue);display:block;">2<sup>de</sup></strong>
+                        <span style="font-size:clamp(16px,1.2vw,20px);color:var(--gray);font-weight:700;">6 semaines</span>
+                    </div>
+                    <div class="card" data-step="4" data-type="fade" style="text-align:center;">
+                        <strong style="font-size:clamp(28px,3vw,42px);color:var(--blue);display:block;">1<sup>re</sup></strong>
+                        <span style="font-size:clamp(16px,1.2vw,20px);color:var(--gray);font-weight:700;">8 semaines</span>
+                    </div> <br>
+                    <div class="card" data-step="5" data-type="fade" style="text-align:center;">
+                        <strong style="font-size:clamp(28px,3vw,42px);color:var(--blue);display:block;">Terminale</strong>
+                        <span style="font-size:clamp(16px,1.2vw,20px);color:var(--gray);font-weight:700;">6 semaines + Parcours Y</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================
+        SLIDE 13 — Q&A
+        ========================================================== -->
+        <section class="slide" data-slide="12" style="--bg:url('images/slide11.png')">
+            <div class="content centered">
+                <p class="eyebrow" data-step="0" data-type="fade">Questions / Réponses</p>
+                <div class="typewriter" data-step="1" data-type="typewriter" data-text="Vos questions"></div>
+                <div class="line centered" data-step="2" data-type="fade"></div>
+                <p class="text centered" data-step="3" data-type="fade" style="font-size:clamp(18px,1.6vw,26px);font-weight:650;">Nous sommes à votre disposition.</p>
+                <div class="final centered" data-step="4" data-type="fade">
+                    <div class="info">
+                        <strong>M. DIANKHA</strong>
+                        <p>Professeur principal</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ===== CONTROLEUR ===== -->
+    <div class="slide-counter" id="slideCounter">
+        <span class="num" id="counterNum">01 / 13</span>
+        <!--<div class="keys">
+            <kbd>←</kbd> <kbd>↑</kbd>
+            <span>ou</span>
+            <kbd>→</kbd> <kbd>↓</kbd> <kbd>␣</kbd>
+        </div>-->
+    </div>
+
+    <script>
+        // ============================================================
+        // ÉTAT & CONFIGURATION
+        // ============================================================
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const slideState = new Map();
+        let currentSlideIndex = 0;
+        let currentStep = 0;
+        let isAnimating = false;
+        let controllerTimeout = null;
+        let touchStartX = 0;
+        let touchStartY = 0;
+    
+        // ============================================================
+        // GESTION DE L'ÉTAT DES SLIDES
+        // ============================================================
+        function getSlideState(index) {
+            return slideState.get(index) ?? -1;
+        }
+    
+        function setSlideState(index, step) {
+            slideState.set(index, step);
+        }
+    
+        // ============================================================
+        // MACHINE À ÉCRIRE (CORRIGÉE)
+        // ============================================================
+        function typeWriter(element, text, speed = 30) {
+            return new Promise((resolve) => {
+                // Si déjà rempli, on ne refait pas
+                if (element.dataset.typed === 'true') {
+                    resolve();
+                    return;
+                }
+    
+                // Nettoyer l'élément
+                element.textContent = '';
+                element.style.opacity = '1';
+    
+                // Créer le curseur et l'ajouter à l'élément
+                const cursor = document.createElement('span');
+                cursor.className = 'cursor';
+                element.appendChild(cursor);
+    
+                let index = 0;
+    
+                function type() {
+                    // Vérifier que le curseur est toujours dans l'élément
+                    if (!element.contains(cursor)) {
+                        // Si le curseur a été retiré, on le réajoute
+                        element.appendChild(cursor);
+                    }
+    
+                    if (index < text.length) {
+                        const char = text.charAt(index);
+                        const textNode = document.createTextNode(char);
+                        // Insérer avant le curseur
+                        element.insertBefore(textNode, cursor);
+                        index++;
+                        setTimeout(type, speed);
+                    } else {
+                        cursor.classList.add('hidden');
+                        element.classList.add('done');
+                        element.dataset.typed = 'true';
+                        resolve();
+                    }
+                }
+    
+                type();
+            });
+        }
+    
+        // ============================================================
+        // RÉCUPÉRATION DES ÉLÉMENTS D'UNE SLIDE
+        // ============================================================
+        function getSlideElements(slideIndex) {
+            const slide = slides[slideIndex];
+            const elements = slide.querySelectorAll('[data-step]');
+            return Array.from(elements).sort((a, b) => {
+                return parseInt(a.dataset.step) - parseInt(b.dataset.step);
+            });
+        }
+    
+        function isTypewriter(el) {
+            return el.classList.contains('typewriter') || el.classList.contains('typewriter-small');
+        }
+    
+        function getTypeSpeed(el) {
+            return el.classList.contains('typewriter') ? 28 : 22;
+        }
+    
+        // ============================================================
+        // AFFICHAGE D'UNE ÉTAPE
+        // ============================================================
+        async function showStep(slideIndex, stepIndex) {
+            const elements = getSlideElements(slideIndex);
+    
+            for (let i = 0; i <= stepIndex && i < elements.length; i++) {
+                const el = elements[i];
+                const isTw = isTypewriter(el);
+    
+                if (el.classList.contains('visible') && !isTw) continue;
+                if (isTw && el.dataset.typed === 'true') {
+                    el.classList.add('visible');
+                    el.style.opacity = '1';
+                    continue;
+                }
+    
+                if (isTw) {
+                    el.classList.add('visible');
+                    await typeWriter(el, el.dataset.text || '', getTypeSpeed(el));
+                } else {
+                    el.classList.add('visible');
+                }
+            }
+    
+            setSlideState(slideIndex, stepIndex);
+            updateSlideCounter(slideIndex);
+        }
+    
+        // ============================================================
+        // PRÉPARATION D'UNE SLIDE
+        // ============================================================
+        function prepareSlide(slideIndex) {
+            const elements = getSlideElements(slideIndex);
+            const maxStep = getSlideState(slideIndex);
+    
+            elements.forEach(el => {
+                const isTw = isTypewriter(el);
+    
+                if (isTw && el.dataset.typed === 'true') {
+                    el.classList.add('visible', 'done');
+                    el.style.opacity = '1';
+                    return;
+                }
+    
+                el.classList.remove('visible');
+    
+                if (isTw) {
+                    // Nettoyer complètement l'élément
+                    el.textContent = '';
+                    el.style.opacity = '0';
+                    el.classList.remove('done');
+                    el.dataset.typed = 'false';
+                }
+            });
+    
+            if (maxStep >= 0) {
+                showStep(slideIndex, Math.min(maxStep, elements.length - 1));
+            }
+        }
+    
+        // ============================================================
+        // NAVIGATION PRINCIPALE
+        // ============================================================
+        async function goToSlide(index, resetStep = false) {
+            if (isAnimating || index < 0 || index >= totalSlides) return;
+    
+            isAnimating = true;
+            currentSlideIndex = index;
+    
+            prepareSlide(index);
+    
+            currentStep = resetStep ? 0 : Math.max(0, getSlideState(index));
+            await showStep(index, currentStep);
+    
+            document.getElementById('deck').scrollTo({
+                top: slides[index].offsetTop,
+                behavior: 'smooth'
+            });
+    
+            updateProgress();
+    
+            setTimeout(() => {
+                isAnimating = false;
+            }, 300);
+        }
+    
+        async function nextStep() {
+            const elements = getSlideElements(currentSlideIndex);
+            const maxStep = elements.length - 1;
+    
+            if (currentStep < maxStep) {
+                currentStep++;
+                await showStep(currentSlideIndex, currentStep);
+            } else if (currentSlideIndex + 1 < totalSlides) {
+                currentStep = 0;
+                await goToSlide(currentSlideIndex + 1);
+            }
+        }
+    
+        async function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                await showStep(currentSlideIndex, currentStep);
+            } else if (currentSlideIndex - 1 >= 0) {
+                const prevIndex = currentSlideIndex - 1;
+                const prevElements = getSlideElements(prevIndex);
+                const prevState = getSlideState(prevIndex);
+                currentStep = prevState >= 0 ? prevState : prevElements.length - 1;
+                await goToSlide(prevIndex);
+                await showStep(prevIndex, currentStep);
+            }
+        }
+    
+        // ============================================================
+        // MISE À JOUR DE L'INTERFACE
+        // ============================================================
+        function updateSlideCounter(index) {
+            const counter = document.getElementById('counterNum');
+            counter.textContent = `${index + 1} / ${totalSlides}`;
+        }
+    
+        function updateProgress() {
+            const progress = document.getElementById('progressBar');
+            progress.style.width = `${((currentSlideIndex + 1) / totalSlides) * 100}%`;
+        }
+    
+        // ============================================================
+        // CONTROLEUR (masquage automatique)
+        // ============================================================
+        function showController() {
+            const ctrl = document.getElementById('slideCounter');
+            ctrl.classList.remove('hidden');
+            clearTimeout(controllerTimeout);
+            controllerTimeout = setTimeout(() => {
+                ctrl.classList.add('hidden');
+            }, 4000);
+        }
+    
+        // ============================================================
+        // ÉVÉNEMENTS CLAVIER
+        // ============================================================
+        document.addEventListener('keydown', (e) => {
+            const isNavKey = [' ', 'Space', 'ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key);
+    
+            if (isNavKey) e.preventDefault();
+    
+            switch (e.key) {
+                case ' ':
+                case 'Space':
+                case 'ArrowRight':
+                case 'ArrowDown':
+                    nextStep();
+                    break;
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    prevStep();
+                    break;
+                case 'PageDown':
+                    if (currentSlideIndex + 1 < totalSlides) {
+                        currentStep = 0;
+                        goToSlide(currentSlideIndex + 1);
+                    }
+                    break;
+                case 'PageUp':
+                    if (currentSlideIndex - 1 >= 0) {
+                        const prevState = getSlideState(currentSlideIndex - 1);
+                        currentStep = prevState >= 0 ? prevState : 0;
+                        goToSlide(currentSlideIndex - 1);
+                    }
+                    break;
+            }
+        });
+    
+        // ============================================================
+        // ÉVÉNEMENTS SOURIS / TOUCHE
+        // ============================================================
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.slide-counter') || e.target.closest('.progress-container')) return;
+            nextStep();
+        });
+    
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        });
+    
+        document.addEventListener('touchend', (e) => {
+            const endX = e.changedTouches[0].clientX;
+            const endY = e.changedTouches[0].clientY;
+            const diffX = touchStartX - endX;
+            const diffY = touchStartY - endY;
+    
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                diffX > 50 ? nextStep() : (diffX < -50 ? prevStep() : null);
+            } else {
+                diffY > 50 ? nextStep() : (diffY < -50 ? prevStep() : null);
+            }
+        });
+    
+        document.addEventListener('mousemove', showController);
+        document.addEventListener('touchstart', showController);
+    
+        // ============================================================
+        // INITIALISATION
+        // ============================================================
+        goToSlide(0, true);
+        setTimeout(showController, 1000);
+    </script>
+</body>
+</html>
